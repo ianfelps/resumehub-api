@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ResumeHub.Api/ResumeHub.Api.csproj" />
+    <Project Path="src/ResumeHub.Domain/ResumeHub.Domain.csproj" />
+    <Project Path="src/ResumeHub.Infrastructure/ResumeHub.Infrastructure.csproj" />
+  </Folder>
+</Solution>
