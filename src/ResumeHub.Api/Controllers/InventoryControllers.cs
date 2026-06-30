@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using ResumeHub.Api.Dtos;
-using ResumeHub.Api.Services;
+using ResumeHub.Application.Dtos;
+using ResumeHub.Application.Services;
 
 namespace ResumeHub.Api.Controllers;
 

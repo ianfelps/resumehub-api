@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using ResumeHub.Api.Common;
+using ResumeHub.Application.Abstractions;
+using ResumeHub.Application.Common;
 using ResumeHub.Domain.Entities;
-using ResumeHub.Infrastructure.Persistence;
 
-namespace ResumeHub.Api.Services;
+namespace ResumeHub.Application.Services;
 
 /// <summary>
 /// Generic CRUD contract for inventory items scoped to the current user.
@@ -22,11 +22,11 @@ public interface IOwnedCrudService<in TCreate, in TUpdate, TResponse>
 /// so a user can only read/modify their own inventory (ownership enforced here).
 /// </summary>
 public abstract class OwnedCrudService<TEntity, TCreate, TUpdate, TResponse>(
-    ResumeHubDbContext db, ICurrentUser currentUser)
+    IApplicationDbContext db, ICurrentUser currentUser)
     : IOwnedCrudService<TCreate, TUpdate, TResponse>
     where TEntity : OwnedEntity
 {
-    protected readonly ResumeHubDbContext Db = db;
+    protected readonly IApplicationDbContext Db = db;
     protected readonly ICurrentUser CurrentUser = currentUser;
 
     protected abstract DbSet<TEntity> Set { get; }

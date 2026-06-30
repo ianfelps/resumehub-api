@@ -1,7 +1,11 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/ResumeHub.Api/ResumeHub.Api.csproj" />
+    <Project Path="src/ResumeHub.Application/ResumeHub.Application.csproj" />
     <Project Path="src/ResumeHub.Domain/ResumeHub.Domain.csproj" />
     <Project Path="src/ResumeHub.Infrastructure/ResumeHub.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ResumeHub.Tests/ResumeHub.Tests.csproj" />
   </Folder>
 </Solution>

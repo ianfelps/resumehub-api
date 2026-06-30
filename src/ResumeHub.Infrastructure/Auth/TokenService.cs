@@ -4,17 +4,13 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using ResumeHub.Application.Abstractions;
+using ResumeHub.Application.Auth;
 using ResumeHub.Domain.Entities;
 
-namespace ResumeHub.Api.Auth;
+namespace ResumeHub.Infrastructure.Auth;
 
-public interface ITokenService
-{
-    string CreateAccessToken(ApplicationUser user);
-    string CreateRefreshToken();
-    string HashRefreshToken(string refreshToken);
-}
-
+/// <summary>JWT signing implementation of the <see cref="ITokenService"/> port.</summary>
 public class TokenService(IOptions<JwtSettings> options) : ITokenService
 {
     private readonly JwtSettings _settings = options.Value;

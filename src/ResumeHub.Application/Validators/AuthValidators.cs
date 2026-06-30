@@ -1,7 +1,7 @@
 using FluentValidation;
-using ResumeHub.Api.Auth;
+using ResumeHub.Application.Auth;
 
-namespace ResumeHub.Api.Validators;
+namespace ResumeHub.Application.Validators;
 
 public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {

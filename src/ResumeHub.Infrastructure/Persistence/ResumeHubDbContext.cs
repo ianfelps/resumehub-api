@@ -1,13 +1,15 @@
 using System.Reflection;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ResumeHub.Application.Abstractions;
 using ResumeHub.Domain.Entities;
 
 namespace ResumeHub.Infrastructure.Persistence;
 
+// IdentityUserContext (not IdentityDbContext) → no role tables
+// (AspNetRoles / AspNetUserRoles / AspNetRoleClaims). Roles are not used.
 public class ResumeHubDbContext(DbContextOptions<ResumeHubDbContext> options)
-    : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
+    : IdentityUserContext<ApplicationUser, Guid>(options), IApplicationDbContext
 {
     public DbSet<Experience> Experiences => Set<Experience>();
     public DbSet<Project> Projects => Set<Project>();

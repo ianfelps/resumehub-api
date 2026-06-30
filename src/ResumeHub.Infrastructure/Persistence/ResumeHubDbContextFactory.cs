@@ -12,6 +12,10 @@ public class ResumeHubDbContextFactory : IDesignTimeDbContextFactory<ResumeHubDb
 {
     public ResumeHubDbContext CreateDbContext(string[] args)
     {
+        // Load .env (searching up from the cwd) so `dotnet ef` honours the same
+        // ConnectionStrings__Default the host uses. No-op if no .env is present.
+        DotNetEnv.Env.TraversePath().Load();
+
         var basePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "ResumeHub.Api");
 
         var configuration = new ConfigurationBuilder()

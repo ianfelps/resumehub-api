@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using ResumeHub.Application.Common;
 
 namespace ResumeHub.Api.Common;
 

@@ -1,11 +1,7 @@
 using System.Security.Claims;
+using ResumeHub.Application.Common;
 
 namespace ResumeHub.Api.Common;
-
-public interface ICurrentUser
-{
-    Guid Id { get; }
-}
 
 /// <summary>Reads the authenticated user's id from the JWT claims on the current request.</summary>
 public class CurrentUser(IHttpContextAccessor accessor) : ICurrentUser

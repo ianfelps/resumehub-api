@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ResumeHub.Api.Auth;
+using ResumeHub.Application.Auth;
 
 namespace ResumeHub.Api.Controllers;
 

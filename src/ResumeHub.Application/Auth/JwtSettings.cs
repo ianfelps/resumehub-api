@@ -1,4 +1,4 @@
-namespace ResumeHub.Api.Auth;
+namespace ResumeHub.Application.Auth;
 
 public class JwtSettings
 {

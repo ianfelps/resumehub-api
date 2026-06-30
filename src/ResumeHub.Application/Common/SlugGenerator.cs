@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace ResumeHub.Api.Common;
+namespace ResumeHub.Application.Common;
 
 public static partial class SlugGenerator
 {

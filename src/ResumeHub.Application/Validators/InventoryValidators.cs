@@ -1,7 +1,7 @@
 using FluentValidation;
-using ResumeHub.Api.Dtos;
+using ResumeHub.Application.Dtos;
 
-namespace ResumeHub.Api.Validators;
+namespace ResumeHub.Application.Validators;
 
 public class ExperienceRequestValidator : AbstractValidator<ExperienceRequest>
 {

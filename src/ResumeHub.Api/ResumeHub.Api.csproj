@@ -16,10 +16,12 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Scalar.AspNetCore" Version="2.16.6" />
+    <PackageReference Include="DotNetEnv" Version="3.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ResumeHub.Infrastructure\ResumeHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\ResumeHub.Application\ResumeHub.Application.csproj" />
     <ProjectReference Include="..\ResumeHub.Domain\ResumeHub.Domain.csproj" />
   </ItemGroup>
 

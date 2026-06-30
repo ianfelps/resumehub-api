@@ -1,6 +1,6 @@
 using ResumeHub.Domain.Enums;
 
-namespace ResumeHub.Api.Dtos;
+namespace ResumeHub.Application.Dtos;
 
 // Experience
 public record ExperienceRequest(

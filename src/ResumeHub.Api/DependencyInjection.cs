@@ -1,11 +1,12 @@
 using System.Text;
-using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using ResumeHub.Api.Auth;
 using ResumeHub.Api.Common;
+using ResumeHub.Application;
+using ResumeHub.Application.Auth;
+using ResumeHub.Application.Common;
 
 namespace ResumeHub.Api;
 
@@ -16,18 +17,16 @@ public static class DependencyInjection
     {
         services.AddControllers();
         services.AddHttpContextAccessor();
-        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
         services.AddFluentValidationAutoValidation();
 
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
 
+        // ICurrentUser is an Application port implemented here (reads JWT claims).
         services.AddScoped<ICurrentUser, CurrentUser>();
-        services.AddScoped<ITokenService, TokenService>();
-        services.AddScoped<IAuthService, AuthService>();
 
-        // Application services (inventory + profiles) are registered here.
-        services.AddApplicationServices();
+        // Use cases, auth service and validators.
+        services.AddApplication();
 
         AddJwtAuth(services, configuration);
         AddOpenApiWithBearer(services);

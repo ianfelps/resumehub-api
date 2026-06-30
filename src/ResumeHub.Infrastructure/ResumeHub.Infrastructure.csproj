@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ResumeHub.Domain\ResumeHub.Domain.csproj" />
+    <ProjectReference Include="..\ResumeHub.Application\ResumeHub.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,6 +16,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.9" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
+    <PackageReference Include="DotNetEnv" Version="3.1.1" />
   </ItemGroup>
 
   <PropertyGroup>

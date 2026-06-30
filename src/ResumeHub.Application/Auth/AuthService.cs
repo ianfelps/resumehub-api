@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using ResumeHub.Api.Common;
+using ResumeHub.Application.Abstractions;
+using ResumeHub.Application.Common;
 using ResumeHub.Domain.Entities;
 
-namespace ResumeHub.Api.Auth;
+namespace ResumeHub.Application.Auth;
 
 public interface IAuthService
 {

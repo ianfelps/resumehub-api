@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using ResumeHub.Api.Common;
-using ResumeHub.Api.Dtos;
+using ResumeHub.Application.Abstractions;
+using ResumeHub.Application.Common;
+using ResumeHub.Application.Dtos;
 using ResumeHub.Domain.Entities;
-using ResumeHub.Infrastructure.Persistence;
 
-namespace ResumeHub.Api.Services;
+namespace ResumeHub.Application.Services;
 
 public interface IProfileService
 {
@@ -17,7 +17,7 @@ public interface IProfileService
     Task<PublicResumeResponse> GetPublicBySlugAsync(string slug);
 }
 
-public class ProfileService(ResumeHubDbContext db, ICurrentUser currentUser) : IProfileService
+public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) : IProfileService
 {
     public async Task<IReadOnlyList<ProfileResponse>> GetAllAsync()
     {

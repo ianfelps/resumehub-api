@@ -11,11 +11,19 @@ C# / .NET 10 · PostgreSQL (Supabase) via EF Core · ASP.NET Identity + JWT.
 ```
 src/
   ResumeHub.Domain/          entidades + enums (sem dependências de infra)
-  ResumeHub.Infrastructure/  DbContext, Identity, EF configs, migrations
-  ResumeHub.Api/             controllers, services, DTOs, validators, auth, OpenAPI
+  ResumeHub.Application/      casos de uso, DTOs e ports (interfaces)
+  ResumeHub.Infrastructure/  EF Core, PostgreSQL e JWT (implementa os ports)
+  ResumeHub.Api/             controllers e configuração HTTP
+tests/
+  ResumeHub.Tests/           testes de domínio e de arquitetura
+docs/
+  architecture.md            visão rápida da arquitetura
 ```
 
-Layered pragmático: controllers finos → services (com ownership) → EF Core. Sem CQRS/MediatR.
+Regra de dependência: **Domain ← Application ← Infrastructure ← Api**. A Application define
+ports (`IApplicationDbContext`, `ITokenService`, `IStorageService`, `ICurrentUser`); a
+Infrastructure os implementa. Detalhes em [`docs/architecture.md`](docs/architecture.md).
+A regra é verificada por testes (NetArchTest).
 
 ## Pré-requisitos
 
@@ -23,22 +31,22 @@ Layered pragmático: controllers finos → services (com ownership) → EF Core.
 - PostgreSQL (Supabase ou local)
 - Ferramenta EF Core: `dotnet tool install --global dotnet-ef`
 
-## Configuração (segredos via user-secrets)
+## Configuração (segredos via .env)
 
-Connection string e chave JWT **não** ficam no repositório. Configure por user-secrets:
+Connection string e chave JWT **não** ficam no repositório. A app carrega
+um arquivo **`.env`** na inicialização (via `DotNetEnv`); o `.env` é git-ignored.
 
 ```bash
-cd src/ResumeHub.Api
-
-# String do Postgres da Supabase (Settings → Database → Connection string → .NET / Npgsql)
-dotnet user-secrets set "ConnectionStrings:Default" "Host=<host>;Port=5432;Database=postgres;Username=<user>;Password=<senha>;SSL Mode=Require;Trust Server Certificate=true"
-
-# Chave JWT (>= 32 chars aleatórios)
-dotnet user-secrets set "Jwt:Key" "<segredo-longo-aleatorio>"
+cp .env.example .env
+# edite .env com a string da Supabase e um Jwt__Key aleatório (>= 32 chars)
 ```
 
-`appsettings.json` traz só placeholders (localhost / chave fake) para o design-time funcionar;
-user-secrets sobrescreve em runtime.
+Chaves aninhadas usam `__` (duplo underscore): `ConnectionStrings__Default`, `Jwt__Key`, etc.
+O `.env` sobrescreve o `appsettings.json` (que traz só placeholders).
+O `dotnet ef` também lê o `.env` (o design-time factory chama `Env.TraversePath().Load()`).
+
+> Alternativa: `dotnet user-secrets` continua funcionando para quem preferir
+> (`cd src/ResumeHub.Api && dotnet user-secrets set "Jwt:Key" "<segredo>"`).
 
 ## Banco de dados
 
@@ -79,6 +87,16 @@ Tudo exige JWT Bearer, exceto `/api/auth/*` e `/api/public/*`.
 3. `POST /api/profiles` (gera slug único) e `PUT /api/profiles/{id}/items` selecionando ids.
 4. `GET /api/public/{slug}` retorna o currículo montado, na ordem definida.
 5. Ownership: token de outro usuário recebe 404 ao acessar recursos alheios.
+
+## Testes
+
+```bash
+dotnet test
+```
+
+- **Domínio**: defaults de `OwnedEntity` (Id/timestamps) e `SlugGenerator`.
+- **Arquitetura** (NetArchTest): garante a regra de dependência entre camadas — o build de
+  teste falha se a Application passar a depender de Infrastructure/Api, etc.
 
 ## Roadmap
 

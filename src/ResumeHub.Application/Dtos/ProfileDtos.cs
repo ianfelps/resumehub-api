@@ -1,4 +1,4 @@
-namespace ResumeHub.Api.Dtos;
+namespace ResumeHub.Application.Dtos;
 
 public record ProfileRequest(string Name, string? Slug, string? Summary, bool IsPublic);
 

@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using ResumeHub.Api.Common;
-using ResumeHub.Api.Dtos;
+using ResumeHub.Application.Abstractions;
+using ResumeHub.Application.Common;
+using ResumeHub.Application.Dtos;
 using ResumeHub.Domain.Entities;
-using ResumeHub.Infrastructure.Persistence;
 
-namespace ResumeHub.Api.Services;
+namespace ResumeHub.Application.Services;
 
 public interface IExperienceService : IOwnedCrudService<ExperienceRequest, ExperienceRequest, ExperienceResponse>;
 public interface IProjectService : IOwnedCrudService<ProjectRequest, ProjectRequest, ProjectResponse>;
@@ -13,7 +13,7 @@ public interface ILanguageService : IOwnedCrudService<LanguageRequest, LanguageR
 public interface IEducationService : IOwnedCrudService<EducationRequest, EducationRequest, EducationResponse>;
 public interface ICourseService : IOwnedCrudService<CourseRequest, CourseRequest, CourseResponse>;
 
-public class ExperienceService(ResumeHubDbContext db, ICurrentUser user)
+public class ExperienceService(IApplicationDbContext db, ICurrentUser user)
     : OwnedCrudService<Experience, ExperienceRequest, ExperienceRequest, ExperienceResponse>(db, user),
       IExperienceService
 {
@@ -38,7 +38,7 @@ public class ExperienceService(ResumeHubDbContext db, ICurrentUser user)
         new(e.Id, e.Company, e.Role, e.Location, e.StartDate, e.EndDate, e.Description);
 }
 
-public class ProjectService(ResumeHubDbContext db, ICurrentUser user)
+public class ProjectService(IApplicationDbContext db, ICurrentUser user)
     : OwnedCrudService<Project, ProjectRequest, ProjectRequest, ProjectResponse>(db, user),
       IProjectService
 {
@@ -60,7 +60,7 @@ public class ProjectService(ResumeHubDbContext db, ICurrentUser user)
         new(e.Id, e.Name, e.Description, e.Url, e.RepoUrl, e.Highlights);
 }
 
-public class SkillService(ResumeHubDbContext db, ICurrentUser user)
+public class SkillService(IApplicationDbContext db, ICurrentUser user)
     : OwnedCrudService<Skill, SkillRequest, SkillRequest, SkillResponse>(db, user),
       ISkillService
 {
@@ -83,7 +83,7 @@ public class SkillService(ResumeHubDbContext db, ICurrentUser user)
         new(e.Id, e.Name, e.Category, e.Level);
 }
 
-public class LanguageService(ResumeHubDbContext db, ICurrentUser user)
+public class LanguageService(IApplicationDbContext db, ICurrentUser user)
     : OwnedCrudService<Language, LanguageRequest, LanguageRequest, LanguageResponse>(db, user),
       ILanguageService
 {
@@ -106,7 +106,7 @@ public class LanguageService(ResumeHubDbContext db, ICurrentUser user)
         new(e.Id, e.Name, e.Proficiency);
 }
 
-public class EducationService(ResumeHubDbContext db, ICurrentUser user)
+public class EducationService(IApplicationDbContext db, ICurrentUser user)
     : OwnedCrudService<Education, EducationRequest, EducationRequest, EducationResponse>(db, user),
       IEducationService
 {
@@ -131,7 +131,7 @@ public class EducationService(ResumeHubDbContext db, ICurrentUser user)
         new(e.Id, e.Institution, e.Degree, e.Field, e.StartDate, e.EndDate);
 }
 
-public class CourseService(ResumeHubDbContext db, ICurrentUser user)
+public class CourseService(IApplicationDbContext db, ICurrentUser user)
     : OwnedCrudService<Course, CourseRequest, CourseRequest, CourseResponse>(db, user),
       ICourseService
 {

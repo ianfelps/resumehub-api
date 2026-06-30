@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ResumeHub.Application.Abstractions;
 using ResumeHub.Domain.Entities;
+using ResumeHub.Infrastructure.Auth;
 using ResumeHub.Infrastructure.Persistence;
 
 namespace ResumeHub.Infrastructure;
@@ -18,13 +20,18 @@ public static class DependencyInjection
         services.AddDbContext<ResumeHubDbContext>(options =>
             options.UseNpgsql(connectionString));
 
+        // Expose the concrete DbContext through the Application port.
+        services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ResumeHubDbContext>());
+
         services.AddIdentityCore<ApplicationUser>(options =>
             {
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequiredLength = 8;
             })
-            .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<ResumeHubDbContext>();
+
+        // JWT token signing port.
+        services.AddScoped<ITokenService, TokenService>();
 
         return services;
     }
