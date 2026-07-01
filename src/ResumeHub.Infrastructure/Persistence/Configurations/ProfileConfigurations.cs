@@ -13,6 +13,8 @@ public class ProfileConfiguration : IEntityTypeConfiguration<Profile>
         b.Property(x => x.Slug).HasMaxLength(120).IsRequired();
         b.Property(x => x.Headline).HasMaxLength(200);
         b.Property(x => x.Summary).HasMaxLength(4000);
+        b.Property(x => x.Theme).HasMaxLength(10).IsRequired();
+        b.Property(x => x.AccentColor).HasMaxLength(9).IsRequired();
         b.HasIndex(x => x.Slug).IsUnique();
         b.HasIndex(x => x.UserId);
         b.HasOne(x => x.User).WithMany(u => u.Profiles)

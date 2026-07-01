@@ -13,6 +13,10 @@ public class Profile : OwnedEntity
     public string? Summary { get; set; }
     public bool IsPublic { get; set; }
 
+    // Public portfolio look & feel.
+    public string Theme { get; set; } = "dark";
+    public string AccentColor { get; set; } = "#5b8cff";
+
     public ICollection<ProfileExperience> Experiences { get; set; } = [];
     public ICollection<ProfileProject> Projects { get; set; } = [];
     public ICollection<ProfileSkill> Skills { get; set; } = [];

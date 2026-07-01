@@ -46,7 +46,9 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
             Slug = slug,
             Headline = dto.Headline,
             Summary = dto.Summary,
-            IsPublic = dto.IsPublic
+            IsPublic = dto.IsPublic,
+            Theme = NormalizeTheme(dto.Theme),
+            AccentColor = NormalizeAccent(dto.AccentColor)
         };
 
         db.Profiles.Add(profile);
@@ -66,6 +68,8 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
         profile.Headline = dto.Headline;
         profile.Summary = dto.Summary;
         profile.IsPublic = dto.IsPublic;
+        profile.Theme = NormalizeTheme(dto.Theme);
+        profile.AccentColor = NormalizeAccent(dto.AccentColor);
 
         await db.SaveChangesAsync();
         return ToResponse(profile);
@@ -153,6 +157,8 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
         return new PublicResumeResponse(
             profile.Name,
             profile.Summary,
+            profile.Theme,
+            profile.AccentColor,
             new PublicOwner(
                 profile.User?.FullName,
                 profile.Headline ?? profile.User?.Headline,
@@ -224,5 +230,15 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
             ?? throw new NotFoundException($"Perfil '{id}' não encontrado.");
 
     private static ProfileResponse ToResponse(Profile p) =>
-        new(p.Id, p.Name, p.Slug, p.Headline, p.Summary, p.IsPublic, p.CreatedAt, p.UpdatedAt);
+        new(p.Id, p.Name, p.Slug, p.Headline, p.Summary, p.IsPublic,
+            p.Theme, p.AccentColor, p.CreatedAt, p.UpdatedAt);
+
+    private static string NormalizeTheme(string? theme)
+        => theme == "light" ? "light" : "dark";
+
+    private static string NormalizeAccent(string? accent)
+        => accent is not null && System.Text.RegularExpressions.Regex.IsMatch(
+            accent, "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
+            ? accent
+            : "#5b8cff";
 }

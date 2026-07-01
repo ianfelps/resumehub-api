@@ -1,11 +1,12 @@
 namespace ResumeHub.Application.Dtos;
 
 public record ProfileRequest(
-    string Name, string? Slug, string? Headline, string? Summary, bool IsPublic);
+    string Name, string? Slug, string? Headline, string? Summary, bool IsPublic,
+    string? Theme, string? AccentColor);
 
 public record ProfileResponse(
     Guid Id, string Name, string Slug, string? Headline, string? Summary, bool IsPublic,
-    DateTime CreatedAt, DateTime UpdatedAt);
+    string Theme, string AccentColor, DateTime CreatedAt, DateTime UpdatedAt);
 
 /// <summary>A single inventory item selected into a profile, with its display order.</summary>
 public record ProfileItemSelection(Guid Id, int DisplayOrder);
@@ -37,6 +38,8 @@ public record PublicOwner(
 public record PublicResumeResponse(
     string Name,
     string? Summary,
+    string Theme,
+    string AccentColor,
     PublicOwner Owner,
     IReadOnlyList<ExperienceResponse> Experiences,
     IReadOnlyList<ProjectResponse> Projects,
