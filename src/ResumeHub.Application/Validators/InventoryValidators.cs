@@ -14,7 +14,7 @@ public class ExperienceRequestValidator : AbstractValidator<ExperienceRequest>
         RuleFor(x => x.EndDate)
             .GreaterThanOrEqualTo(x => x.StartDate)
             .When(x => x.EndDate.HasValue)
-            .WithMessage("EndDate must be on or after StartDate.");
+            .WithMessage("A data de término deve ser igual ou posterior à de início.");
     }
 }
 
@@ -59,7 +59,7 @@ public class EducationRequestValidator : AbstractValidator<EducationRequest>
         RuleFor(x => x.EndDate)
             .GreaterThanOrEqualTo(x => x.StartDate)
             .When(x => x.EndDate.HasValue)
-            .WithMessage("EndDate must be on or after StartDate.");
+            .WithMessage("A data de término deve ser igual ou posterior à de início.");
     }
 }
 

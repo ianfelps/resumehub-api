@@ -28,6 +28,7 @@ public static class DependencyInjection
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequiredLength = 8;
             })
+            .AddErrorDescriber<PtBrIdentityErrorDescriber>()
             .AddEntityFrameworkStores<ResumeHubDbContext>();
 
         // JWT token signing port.

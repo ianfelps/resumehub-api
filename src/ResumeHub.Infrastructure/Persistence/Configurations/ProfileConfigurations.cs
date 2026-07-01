@@ -11,6 +11,7 @@ public class ProfileConfiguration : IEntityTypeConfiguration<Profile>
         b.HasKey(x => x.Id);
         b.Property(x => x.Name).HasMaxLength(200).IsRequired();
         b.Property(x => x.Slug).HasMaxLength(120).IsRequired();
+        b.Property(x => x.Headline).HasMaxLength(200);
         b.Property(x => x.Summary).HasMaxLength(4000);
         b.HasIndex(x => x.Slug).IsUnique();
         b.HasIndex(x => x.UserId);

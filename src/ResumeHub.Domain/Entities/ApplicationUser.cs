@@ -11,6 +11,11 @@ public class ApplicationUser : IdentityUser<Guid>
     public string? Headline { get; set; }
     public string? Location { get; set; }
 
+    // Social / contact links surfaced on the public resume.
+    public string? LinkedInUrl { get; set; }
+    public string? GitHubUrl { get; set; }
+    public string? WebsiteUrl { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // Refresh token (single active session model for the MVP).

@@ -14,6 +14,7 @@ public interface IProfileService
     Task<ProfileResponse> UpdateAsync(Guid id, ProfileRequest dto);
     Task DeleteAsync(Guid id);
     Task SetItemsAsync(Guid id, ProfileItemsRequest dto);
+    Task<ProfileItemsResponse> GetItemsAsync(Guid id);
     Task<PublicResumeResponse> GetPublicBySlugAsync(string slug);
 }
 
@@ -43,6 +44,7 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
             UserId = currentUser.Id,
             Name = dto.Name,
             Slug = slug,
+            Headline = dto.Headline,
             Summary = dto.Summary,
             IsPublic = dto.IsPublic
         };
@@ -61,6 +63,7 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
             profile.Slug = await EnsureUniqueSlugAsync(desiredSlug, excludeProfileId: profile.Id);
 
         profile.Name = dto.Name;
+        profile.Headline = dto.Headline;
         profile.Summary = dto.Summary;
         profile.IsPublic = dto.IsPublic;
 
@@ -85,7 +88,7 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
             .Include(p => p.Education)
             .Include(p => p.Courses)
             .FirstOrDefaultAsync(p => p.Id == id && p.UserId == currentUser.Id)
-            ?? throw new NotFoundException($"Profile '{id}' not found.");
+            ?? throw new NotFoundException($"Perfil '{id}' não encontrado.");
 
         await ValidateOwnedIdsAsync(dto);
 
@@ -105,6 +108,34 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
         await db.SaveChangesAsync();
     }
 
+    public async Task<ProfileItemsResponse> GetItemsAsync(Guid id)
+    {
+        var profile = await db.Profiles
+            .AsNoTracking()
+            .Include(p => p.Experiences)
+            .Include(p => p.Projects)
+            .Include(p => p.Skills)
+            .Include(p => p.Languages)
+            .Include(p => p.Education)
+            .Include(p => p.Courses)
+            .FirstOrDefaultAsync(p => p.Id == id && p.UserId == currentUser.Id)
+            ?? throw new NotFoundException($"Perfil '{id}' não encontrado.");
+
+        return new ProfileItemsResponse(
+            profile.Experiences.OrderBy(x => x.DisplayOrder)
+                .Select(x => new ProfileItemSelection(x.ExperienceId, x.DisplayOrder)).ToList(),
+            profile.Projects.OrderBy(x => x.DisplayOrder)
+                .Select(x => new ProfileItemSelection(x.ProjectId, x.DisplayOrder)).ToList(),
+            profile.Skills.OrderBy(x => x.DisplayOrder)
+                .Select(x => new ProfileItemSelection(x.SkillId, x.DisplayOrder)).ToList(),
+            profile.Languages.OrderBy(x => x.DisplayOrder)
+                .Select(x => new ProfileItemSelection(x.LanguageId, x.DisplayOrder)).ToList(),
+            profile.Education.OrderBy(x => x.DisplayOrder)
+                .Select(x => new ProfileItemSelection(x.EducationId, x.DisplayOrder)).ToList(),
+            profile.Courses.OrderBy(x => x.DisplayOrder)
+                .Select(x => new ProfileItemSelection(x.CourseId, x.DisplayOrder)).ToList());
+    }
+
     public async Task<PublicResumeResponse> GetPublicBySlugAsync(string slug)
     {
         var profile = await db.Profiles
@@ -117,12 +148,18 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
             .Include(p => p.Education).ThenInclude(x => x.Education)
             .Include(p => p.Courses).ThenInclude(x => x.Course)
             .FirstOrDefaultAsync(p => p.Slug == slug && p.IsPublic)
-            ?? throw new NotFoundException($"Public profile '{slug}' not found.");
+            ?? throw new NotFoundException($"Perfil público '{slug}' não encontrado.");
 
         return new PublicResumeResponse(
             profile.Name,
             profile.Summary,
-            new PublicOwner(profile.User?.FullName, profile.User?.Headline, profile.User?.Location),
+            new PublicOwner(
+                profile.User?.FullName,
+                profile.Headline ?? profile.User?.Headline,
+                profile.User?.Location,
+                profile.User?.LinkedInUrl,
+                profile.User?.GitHubUrl,
+                profile.User?.WebsiteUrl),
             profile.Experiences.OrderBy(x => x.DisplayOrder)
                 .Select(x => new ExperienceResponse(x.Experience!.Id, x.Experience.Company,
                     x.Experience.Role, x.Experience.Location, x.Experience.StartDate,
@@ -149,12 +186,12 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
 
     private async Task ValidateOwnedIdsAsync(ProfileItemsRequest dto)
     {
-        await AssertOwnedAsync(db.Experiences, dto.Experiences, "Experience");
-        await AssertOwnedAsync(db.Projects, dto.Projects, "Project");
-        await AssertOwnedAsync(db.Skills, dto.Skills, "Skill");
-        await AssertOwnedAsync(db.Languages, dto.Languages, "Language");
-        await AssertOwnedAsync(db.Education, dto.Education, "Education");
-        await AssertOwnedAsync(db.Courses, dto.Courses, "Course");
+        await AssertOwnedAsync(db.Experiences, dto.Experiences, "experiência");
+        await AssertOwnedAsync(db.Projects, dto.Projects, "projetos");
+        await AssertOwnedAsync(db.Skills, dto.Skills, "habilidades");
+        await AssertOwnedAsync(db.Languages, dto.Languages, "idiomas");
+        await AssertOwnedAsync(db.Education, dto.Education, "formação");
+        await AssertOwnedAsync(db.Courses, dto.Courses, "cursos");
     }
 
     private async Task AssertOwnedAsync<TEntity>(
@@ -166,7 +203,8 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
         var ids = selections.Select(s => s.Id).Distinct().ToList();
         var ownedCount = await set.CountAsync(e => ids.Contains(e.Id) && e.UserId == currentUser.Id);
         if (ownedCount != ids.Count)
-            throw new NotFoundException($"One or more {label} items were not found in your inventory.");
+            throw new NotFoundException(
+                $"Um ou mais itens de {label} não foram encontrados no seu inventário.");
     }
 
     private async Task<string> EnsureUniqueSlugAsync(string baseSlug, Guid? excludeProfileId)
@@ -183,8 +221,8 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
 
     private async Task<Profile> FindOwnedAsync(Guid id)
         => await db.Profiles.FirstOrDefaultAsync(p => p.Id == id && p.UserId == currentUser.Id)
-            ?? throw new NotFoundException($"Profile '{id}' not found.");
+            ?? throw new NotFoundException($"Perfil '{id}' não encontrado.");
 
     private static ProfileResponse ToResponse(Profile p) =>
-        new(p.Id, p.Name, p.Slug, p.Summary, p.IsPublic, p.CreatedAt, p.UpdatedAt);
+        new(p.Id, p.Name, p.Slug, p.Headline, p.Summary, p.IsPublic, p.CreatedAt, p.UpdatedAt);
 }

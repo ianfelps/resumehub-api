@@ -12,12 +12,24 @@ namespace ResumeHub.Api;
 
 public static class DependencyInjection
 {
+    /// <summary>CORS policy that allows the SPA frontend (direct browser calls).</summary>
+    public const string WebCorsPolicy = "web";
+
     public static IServiceCollection AddApi(
         this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers();
         services.AddHttpContextAccessor();
         services.AddFluentValidationAutoValidation();
+
+        // The Next.js client calls this API directly from the browser. Allow its
+        // origin (configurable via Cors__WebOrigin) so preflight/CORS succeeds.
+        var webOrigin = configuration["Cors:WebOrigin"] ?? "http://localhost:3000";
+        services.AddCors(options =>
+            options.AddPolicy(WebCorsPolicy, policy => policy
+                .WithOrigins(webOrigin)
+                .AllowAnyHeader()
+                .AllowAnyMethod()));
 
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();

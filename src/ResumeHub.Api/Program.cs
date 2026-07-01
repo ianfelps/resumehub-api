@@ -23,6 +23,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors(ResumeHub.Api.DependencyInjection.WebCorsPolicy);
+
 app.UseAuthentication();
 app.UseAuthorization();
 

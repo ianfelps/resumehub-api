@@ -24,7 +24,7 @@ public class AuthService(
     {
         var existing = await userManager.FindByEmailAsync(request.Email);
         if (existing is not null)
-            throw new ConflictException("Email already registered.");
+            throw new ConflictException("E-mail já cadastrado.");
 
         var user = new ApplicationUser
         {
@@ -44,7 +44,7 @@ public class AuthService(
     {
         var user = await userManager.FindByEmailAsync(request.Email);
         if (user is null || !await userManager.CheckPasswordAsync(user, request.Password))
-            throw new UnauthorizedAccessException("Invalid credentials.");
+            throw new UnauthorizedAccessException("Credenciais inválidas.");
 
         return await IssueTokensAsync(user);
     }
@@ -56,7 +56,7 @@ public class AuthService(
 
         if (user is null || user.RefreshTokenExpiresAt is null
             || user.RefreshTokenExpiresAt < DateTime.UtcNow)
-            throw new UnauthorizedAccessException("Invalid or expired refresh token.");
+            throw new UnauthorizedAccessException("Token de atualização inválido ou expirado.");
 
         return await IssueTokensAsync(user);
     }

@@ -1,9 +1,10 @@
 namespace ResumeHub.Application.Dtos;
 
-public record ProfileRequest(string Name, string? Slug, string? Summary, bool IsPublic);
+public record ProfileRequest(
+    string Name, string? Slug, string? Headline, string? Summary, bool IsPublic);
 
 public record ProfileResponse(
-    Guid Id, string Name, string Slug, string? Summary, bool IsPublic,
+    Guid Id, string Name, string Slug, string? Headline, string? Summary, bool IsPublic,
     DateTime CreatedAt, DateTime UpdatedAt);
 
 /// <summary>A single inventory item selected into a profile, with its display order.</summary>
@@ -18,9 +19,20 @@ public record ProfileItemsRequest(
     List<ProfileItemSelection>? Education,
     List<ProfileItemSelection>? Courses);
 
+/// <summary>A profile's currently selected items, per inventory type (read-back).</summary>
+public record ProfileItemsResponse(
+    IReadOnlyList<ProfileItemSelection> Experiences,
+    IReadOnlyList<ProfileItemSelection> Projects,
+    IReadOnlyList<ProfileItemSelection> Skills,
+    IReadOnlyList<ProfileItemSelection> Languages,
+    IReadOnlyList<ProfileItemSelection> Education,
+    IReadOnlyList<ProfileItemSelection> Courses);
+
 // ---- Public assembled resume ----
 
-public record PublicOwner(string? FullName, string? Headline, string? Location);
+public record PublicOwner(
+    string? FullName, string? Headline, string? Location,
+    string? LinkedInUrl, string? GitHubUrl, string? WebsiteUrl);
 
 public record PublicResumeResponse(
     string Name,

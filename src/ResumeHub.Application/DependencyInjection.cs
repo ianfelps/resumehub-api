@@ -1,5 +1,7 @@
+using System.Globalization;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using ResumeHub.Application.Account;
 using ResumeHub.Application.Auth;
 using ResumeHub.Application.Services;
 
@@ -15,6 +17,7 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IAccountService, AccountService>();
 
         services.AddScoped<IExperienceService, ExperienceService>();
         services.AddScoped<IProjectService, ProjectService>();
@@ -25,6 +28,9 @@ public static class DependencyInjection
         services.AddScoped<IProfileService, ProfileService>();
 
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+
+        // Default FluentValidation messages (NotEmpty, EmailAddress, …) in PT-BR.
+        ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("pt-BR");
 
         return services;
     }

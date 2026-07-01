@@ -33,6 +33,10 @@ public class ProfilesController(IProfileService service) : ControllerBase
         return NoContent();
     }
 
+    [HttpGet("{id:guid}/items")]
+    public async Task<ActionResult<ProfileItemsResponse>> GetItems(Guid id)
+        => Ok(await service.GetItemsAsync(id));
+
     [HttpPut("{id:guid}/items")]
     public async Task<IActionResult> SetItems(Guid id, ProfileItemsRequest dto)
     {

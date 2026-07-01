@@ -12,10 +12,10 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
     {
         var (status, title) = exception switch
         {
-            NotFoundException => (StatusCodes.Status404NotFound, "Resource not found"),
-            ConflictException => (StatusCodes.Status409Conflict, "Conflict"),
-            UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "Unauthorized"),
-            _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred")
+            NotFoundException => (StatusCodes.Status404NotFound, "Recurso não encontrado"),
+            ConflictException => (StatusCodes.Status409Conflict, "Conflito"),
+            UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "Não autorizado"),
+            _ => (StatusCodes.Status500InternalServerError, "Ocorreu um erro inesperado")
         };
 
         if (status == StatusCodes.Status500InternalServerError)

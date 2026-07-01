@@ -8,6 +8,8 @@ public class Profile : OwnedEntity
 {
     public string Name { get; set; } = string.Empty;
     public string Slug { get; set; } = string.Empty;
+    /// <summary>Optional resume subtitle (e.g. "Desenvolvedor Backend"). Overrides the user headline.</summary>
+    public string? Headline { get; set; }
     public string? Summary { get; set; }
     public bool IsPublic { get; set; }
 
