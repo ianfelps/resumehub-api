@@ -181,9 +181,9 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
                 .Select(x => new ExperienceResponse(x.Experience!.Id, x.Experience.Company,
                     x.Experience.Role, x.Experience.Location, x.Experience.StartDate,
                     x.Experience.EndDate, x.Experience.Description)).ToList(),
-            profile.Projects.OrderBy(x => x.DisplayOrder)
+            profile.Projects.OrderByDescending(x => x.Project!.Date)
                 .Select(x => new ProjectResponse(x.Project!.Id, x.Project.Name,
-                    x.Project.Description, x.Project.Url, x.Project.RepoUrl, x.Project.Highlights)).ToList(),
+                    x.Project.Description, x.Project.Url, x.Project.RepoUrl, x.Project.Date)).ToList(),
             profile.Skills.OrderBy(x => x.DisplayOrder)
                 .Select(x => new SkillResponse(x.Skill!.Id, x.Skill.Name, x.Skill.Category, x.Skill.Level)).ToList(),
             profile.Languages.OrderBy(x => x.DisplayOrder)
@@ -237,9 +237,9 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
                 .Select(x => new ExperienceResponse(x.Experience!.Id, x.Experience.Company,
                     x.Experience.Role, x.Experience.Location, x.Experience.StartDate,
                     x.Experience.EndDate, x.Experience.Description)).ToList(),
-            profile.Projects.OrderBy(x => x.DisplayOrder)
+            profile.Projects.OrderByDescending(x => x.Project!.Date)
                 .Select(x => new ProjectResponse(x.Project!.Id, x.Project.Name,
-                    x.Project.Description, x.Project.Url, x.Project.RepoUrl, x.Project.Highlights)).ToList(),
+                    x.Project.Description, x.Project.Url, x.Project.RepoUrl, x.Project.Date)).ToList(),
             profile.Skills.OrderBy(x => x.DisplayOrder)
                 .Select(x => new SkillResponse(x.Skill!.Id, x.Skill.Name, x.Skill.Category, x.Skill.Level)).ToList(),
             profile.Languages.OrderBy(x => x.DisplayOrder)
@@ -272,9 +272,8 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
                     });
                     Section(column, "Projetos", resume.Projects, (section, p) =>
                     {
-                        Entry(section, p.Name, null, p.Url);
+                        Entry(section, p.Name, p.Date.HasValue ? MonthYear(p.Date.Value) : null, p.Url);
                         Markdown(section, p.Description);
-                        Markdown(section, p.Highlights);
                     });
                     Section(column, "Formação", resume.Education, (section, e) =>
                         Entry(section, e.Degree, FormatPeriod(e.StartDate, e.EndDate),

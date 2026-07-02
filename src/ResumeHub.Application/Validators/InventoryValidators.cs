@@ -26,7 +26,6 @@ public class ProjectRequestValidator : AbstractValidator<ProjectRequest>
         RuleFor(x => x.Description).MaximumLength(4000);
         RuleFor(x => x.Url).MaximumLength(500);
         RuleFor(x => x.RepoUrl).MaximumLength(500);
-        RuleFor(x => x.Highlights).MaximumLength(4000);
     }
 }
 

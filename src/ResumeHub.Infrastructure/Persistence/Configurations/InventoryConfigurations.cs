@@ -28,7 +28,6 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
         b.Property(x => x.Description).HasMaxLength(4000);
         b.Property(x => x.Url).HasMaxLength(500);
         b.Property(x => x.RepoUrl).HasMaxLength(500);
-        b.Property(x => x.Highlights).HasMaxLength(4000);
         b.HasIndex(x => x.UserId);
         b.HasOne(x => x.User).WithMany(u => u.Projects)
             .HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);

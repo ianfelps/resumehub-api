@@ -44,20 +44,23 @@ public class ProjectService(IApplicationDbContext db, ICurrentUser user)
 {
     protected override DbSet<Project> Set => Db.Projects;
 
+    protected override IQueryable<Project> OrderListing(IQueryable<Project> q)
+        => q.OrderByDescending(e => e.Date);
+
     protected override Project FromCreate(ProjectRequest d) => new()
     {
         Name = d.Name, Description = d.Description, Url = d.Url,
-        RepoUrl = d.RepoUrl, Highlights = d.Highlights
+        RepoUrl = d.RepoUrl, Date = d.Date
     };
 
     protected override void ApplyUpdate(ProjectRequest d, Project e)
     {
         e.Name = d.Name; e.Description = d.Description; e.Url = d.Url;
-        e.RepoUrl = d.RepoUrl; e.Highlights = d.Highlights;
+        e.RepoUrl = d.RepoUrl; e.Date = d.Date;
     }
 
     protected override ProjectResponse ToResponse(Project e) =>
-        new(e.Id, e.Name, e.Description, e.Url, e.RepoUrl, e.Highlights);
+        new(e.Id, e.Name, e.Description, e.Url, e.RepoUrl, e.Date);
 }
 
 public class SkillService(IApplicationDbContext db, ICurrentUser user)

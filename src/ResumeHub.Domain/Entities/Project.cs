@@ -9,5 +9,5 @@ public class Project : OwnedEntity
     public string? Description { get; set; }
     public string? Url { get; set; }
     public string? RepoUrl { get; set; }
-    public string? Highlights { get; set; }
+    public DateOnly? Date { get; set; }
 }

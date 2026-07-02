@@ -12,9 +12,9 @@ public record ExperienceResponse(
 
 // Project
 public record ProjectRequest(
-    string Name, string? Description, string? Url, string? RepoUrl, string? Highlights);
+    string Name, string? Description, string? Url, string? RepoUrl, DateOnly? Date);
 public record ProjectResponse(
-    Guid Id, string Name, string? Description, string? Url, string? RepoUrl, string? Highlights);
+    Guid Id, string Name, string? Description, string? Url, string? RepoUrl, DateOnly? Date);
 
 // Skill
 public record SkillRequest(string Name, SkillCategory Category, SkillLevel Level);
