@@ -22,6 +22,14 @@ public class ChangePasswordRequestValidator : AbstractValidator<ChangePasswordRe
     public ChangePasswordRequestValidator()
     {
         RuleFor(x => x.CurrentPassword).NotEmpty();
-        RuleFor(x => x.NewPassword).NotEmpty().MinimumLength(8).MaximumLength(128);
+        RuleFor(x => x.NewPassword).NotEmpty().StrongPassword();
+    }
+}
+
+public class DeleteAccountRequestValidator : AbstractValidator<DeleteAccountRequest>
+{
+    public DeleteAccountRequestValidator()
+    {
+        RuleFor(x => x.Password).NotEmpty();
     }
 }

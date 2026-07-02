@@ -34,4 +34,25 @@ public class ValidationExtensionsTests
     {
         Assert.False(ValidationExtensions.BeHttpUrl(url));
     }
+
+    [Theory]
+    [InlineData("Senha123!")]
+    [InlineData("a1@aaaaa")]
+    [InlineData("P@ssw0rd")]
+    public void IsStrongPassword_accepts_letter_digit_special_min8(string password)
+    {
+        Assert.True(ValidationExtensions.IsStrongPassword(password));
+    }
+
+    [Theory]
+    [InlineData(null)]          // empty
+    [InlineData("")]
+    [InlineData("Ab1!")]        // too short
+    [InlineData("abcdefg1")]    // no special
+    [InlineData("abcdefg!")]    // no digit
+    [InlineData("1234567!")]    // no letter
+    public void IsStrongPassword_rejects_weak_passwords(string? password)
+    {
+        Assert.False(ValidationExtensions.IsStrongPassword(password));
+    }
 }

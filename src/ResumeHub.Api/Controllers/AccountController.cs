@@ -23,4 +23,11 @@ public class AccountController(IAccountService service) : ControllerBase
         await service.ChangePasswordAsync(dto);
         return NoContent();
     }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete([FromBody] DeleteAccountRequest dto)
+    {
+        await service.DeleteAsync(dto);
+        return NoContent();
+    }
 }

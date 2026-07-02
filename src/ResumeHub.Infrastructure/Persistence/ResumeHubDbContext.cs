@@ -1,16 +1,16 @@
 using System.Reflection;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ResumeHub.Application.Abstractions;
 using ResumeHub.Domain.Entities;
 
 namespace ResumeHub.Infrastructure.Persistence;
 
-// IdentityUserContext (not IdentityDbContext) → no role tables
-// (AspNetRoles / AspNetUserRoles / AspNetRoleClaims). Roles are not used.
+// Plain EF Core DbContext — user identity/auth is owned by the app (no ASP.NET Identity).
 public class ResumeHubDbContext(DbContextOptions<ResumeHubDbContext> options)
-    : IdentityUserContext<ApplicationUser, Guid>(options), IApplicationDbContext
+    : DbContext(options), IApplicationDbContext
 {
+    public DbSet<User> Users => Set<User>();
+
     public DbSet<Experience> Experiences => Set<Experience>();
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<Skill> Skills => Set<Skill>();
