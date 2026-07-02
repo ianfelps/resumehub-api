@@ -29,7 +29,8 @@ public static class DependencyInjection
             options.AddPolicy(WebCorsPolicy, policy => policy
                 .WithOrigins(webOrigin)
                 .AllowAnyHeader()
-                .AllowAnyMethod()));
+                .AllowAnyMethod()
+                .WithExposedHeaders("X-Page-Count")));
 
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();

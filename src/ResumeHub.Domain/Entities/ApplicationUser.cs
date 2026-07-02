@@ -11,6 +11,10 @@ public class ApplicationUser : IdentityUser<Guid>
     public string? Headline { get; set; }
     public string? Location { get; set; }
 
+    // Whether the account e-mail is surfaced on the public resume. Phone number
+    // reuses the inherited IdentityUser.PhoneNumber column; it always shows when set.
+    public bool ShowEmailOnResume { get; set; }
+
     // Social / contact links surfaced on the public resume.
     public string? LinkedInUrl { get; set; }
     public string? GitHubUrl { get; set; }

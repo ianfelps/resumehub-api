@@ -24,6 +24,8 @@ public class AccountService(
         user.FullName = dto.FullName;
         user.Headline = dto.Headline;
         user.Location = dto.Location;
+        user.PhoneNumber = dto.PhoneNumber;
+        user.ShowEmailOnResume = dto.ShowEmailOnResume;
         user.LinkedInUrl = dto.LinkedInUrl;
         user.GitHubUrl = dto.GitHubUrl;
         user.WebsiteUrl = dto.WebsiteUrl;
@@ -50,5 +52,6 @@ public class AccountService(
 
     private static AccountResponse ToResponse(ApplicationUser u)
         => new(u.Email ?? string.Empty, u.FullName, u.Headline, u.Location,
+            u.PhoneNumber, u.ShowEmailOnResume,
             u.LinkedInUrl, u.GitHubUrl, u.WebsiteUrl);
 }

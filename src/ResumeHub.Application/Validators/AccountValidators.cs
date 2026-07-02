@@ -10,6 +10,7 @@ public class UpdateAccountRequestValidator : AbstractValidator<UpdateAccountRequ
         RuleFor(x => x.FullName).MaximumLength(200);
         RuleFor(x => x.Headline).MaximumLength(200);
         RuleFor(x => x.Location).MaximumLength(200);
+        RuleFor(x => x.PhoneNumber).MaximumLength(40);
         RuleFor(x => x.LinkedInUrl).MaximumLength(300);
         RuleFor(x => x.GitHubUrl).MaximumLength(300);
         RuleFor(x => x.WebsiteUrl).MaximumLength(300);

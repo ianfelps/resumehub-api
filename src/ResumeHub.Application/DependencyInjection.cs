@@ -1,6 +1,7 @@
 using System.Globalization;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using QuestPDF.Infrastructure;
 using ResumeHub.Application.Account;
 using ResumeHub.Application.Auth;
 using ResumeHub.Application.Services;
@@ -16,6 +17,8 @@ public static class DependencyInjection
     /// </summary>
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
+        QuestPDF.Settings.License = LicenseType.Community;
+
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAccountService, AccountService>();
 

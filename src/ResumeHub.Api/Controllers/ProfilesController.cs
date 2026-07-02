@@ -37,6 +37,14 @@ public class ProfilesController(IProfileService service) : ControllerBase
     public async Task<ActionResult<ProfileItemsResponse>> GetItems(Guid id)
         => Ok(await service.GetItemsAsync(id));
 
+    [HttpGet("{id:guid}/pdf")]
+    public async Task<IActionResult> GetPdf(Guid id)
+    {
+        var pdf = await service.GeneratePdfAsync(id);
+        Response.Headers["X-Page-Count"] = pdf.PageCount.ToString();
+        return File(pdf.Content, "application/pdf", pdf.FileName);
+    }
+
     [HttpPut("{id:guid}/items")]
     public async Task<IActionResult> SetItems(Guid id, ProfileItemsRequest dto)
     {

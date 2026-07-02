@@ -33,6 +33,7 @@ public record ProfileItemsResponse(
 
 public record PublicOwner(
     string? FullName, string? Headline, string? Location,
+    string? Email, string? PhoneNumber,
     string? LinkedInUrl, string? GitHubUrl, string? WebsiteUrl);
 
 public record PublicResumeResponse(
