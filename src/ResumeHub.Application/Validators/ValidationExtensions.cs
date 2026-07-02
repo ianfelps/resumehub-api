@@ -23,4 +23,26 @@ public static class ValidationExtensions
         return Uri.TryCreate(value, UriKind.Absolute, out var uri)
             && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
     }
+
+    /// <summary>
+    /// Enforces the password policy: 8–128 chars, with at least one letter, one digit
+    /// and one special character. Each rule yields its own message so the API and the
+    /// client checklist stay in sync.
+    /// </summary>
+    public static IRuleBuilderOptions<T, string> StrongPassword<T>(
+        this IRuleBuilder<T, string> rule)
+        => rule
+            .MinimumLength(8).WithMessage("A senha deve ter pelo menos 8 caracteres.")
+            .MaximumLength(128).WithMessage("A senha deve ter no máximo 128 caracteres.")
+            .Matches("[A-Za-z]").WithMessage("A senha deve conter ao menos uma letra.")
+            .Matches("[0-9]").WithMessage("A senha deve conter ao menos um número.")
+            .Matches("[^A-Za-z0-9]").WithMessage("A senha deve conter ao menos um caractere especial.");
+
+    /// <summary>Same policy as <see cref="StrongPassword"/>, as a plain predicate.</summary>
+    public static bool IsStrongPassword(string? value)
+        => !string.IsNullOrEmpty(value)
+            && value.Length is >= 8 and <= 128
+            && value.Any(char.IsLetter)
+            && value.Any(char.IsDigit)
+            && value.Any(c => !char.IsLetterOrDigit(c));
 }

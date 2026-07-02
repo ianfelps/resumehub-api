@@ -12,3 +12,5 @@ public record UpdateAccountRequest(
     string? LinkedInUrl, string? GitHubUrl, string? WebsiteUrl);
 
 public record ChangePasswordRequest(string CurrentPassword, string NewPassword);
+
+public record DeleteAccountRequest(string Password);

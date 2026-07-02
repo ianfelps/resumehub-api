@@ -10,6 +10,8 @@ namespace ResumeHub.Application.Abstractions;
 /// </summary>
 public interface IApplicationDbContext
 {
+    DbSet<User> Users { get; }
+
     DbSet<Experience> Experiences { get; }
     DbSet<Project> Projects { get; }
     DbSet<Skill> Skills { get; }

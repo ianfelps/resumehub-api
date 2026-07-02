@@ -1,0 +1,36 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Deploys the ResumeHub .NET API as a Docker web service.
+# Import via Render Dashboard → New → Blueprint (points at this repo).
+services:
+  - type: web
+    name: resumehub-api
+    runtime: docker
+    dockerfilePath: resumehub-api/Dockerfile
+    dockerContext: resumehub-api
+    plan: free
+    region: oregon
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      # Render terminates TLS at its edge and forwards over HTTP; the app honors
+      # X-Forwarded-* (UseForwardedHeaders) so HTTPS/redirect/rate-limit stay correct.
+      - key: Jwt__Issuer
+        value: ResumeHub
+      - key: Jwt__Audience
+        value: ResumeHubClients
+      - key: Jwt__AccessTokenMinutes
+        value: "15"
+      - key: Jwt__RefreshTokenDays
+        value: "7"
+      # Render generates a strong random signing key on first deploy (no secret in git).
+      - key: Jwt__Key
+        generateValue: true
+      # Secrets set in the Render dashboard (sync:false = prompted, never stored in this file):
+      #   ConnectionStrings__Default -> Supabase Postgres string (use "SSL Mode=VerifyFull")
+      #   Cors__WebOrigin            -> real frontend origin, e.g. https://resumehub.vercel.app
+      - key: ConnectionStrings__Default
+        sync: false
+      - key: Cors__WebOrigin
+        sync: false

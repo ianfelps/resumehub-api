@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ResumeHub.Application.Abstractions;
-using ResumeHub.Domain.Entities;
 using ResumeHub.Infrastructure.Auth;
 using ResumeHub.Infrastructure.Persistence;
 
@@ -23,19 +21,8 @@ public static class DependencyInjection
         // Expose the concrete DbContext through the Application port.
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ResumeHubDbContext>());
 
-        services.AddIdentityCore<ApplicationUser>(options =>
-            {
-                options.User.RequireUniqueEmail = true;
-                options.Password.RequiredLength = 8;
-
-                // Brute-force defense: lock an account after repeated failed logins.
-                // AuthService must call AccessFailedAsync/ResetAccessFailedCountAsync for this to apply.
-                options.Lockout.AllowedForNewUsers = true;
-                options.Lockout.MaxFailedAccessAttempts = 5;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            })
-            .AddErrorDescriber<PtBrIdentityErrorDescriber>()
-            .AddEntityFrameworkStores<ResumeHubDbContext>();
+        // Password hashing (BCrypt, with legacy Identity-hash verification).
+        services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
 
         // JWT token signing port.
         services.AddScoped<ITokenService, TokenService>();

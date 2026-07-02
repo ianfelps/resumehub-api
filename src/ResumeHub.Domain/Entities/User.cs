@@ -1,18 +1,27 @@
-using Microsoft.AspNetCore.Identity;
-
 namespace ResumeHub.Domain.Entities;
 
 /// <summary>
 /// Platform user. Owns the whole career inventory and the curated profiles.
+/// Plain POCO — no ASP.NET Identity base type.
 /// </summary>
-public class ApplicationUser : IdentityUser<Guid>
+public class User
 {
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    // Login credentials. NormalizedEmail (upper-invariant) backs a unique index
+    // and case-insensitive lookups.
+    public string Email { get; set; } = string.Empty;
+    public string NormalizedEmail { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
+
+    public string? PhoneNumber { get; set; }
+
     public string? FullName { get; set; }
     public string? Headline { get; set; }
     public string? Location { get; set; }
 
     // Whether the account e-mail is surfaced on the public resume. Phone number
-    // reuses the inherited IdentityUser.PhoneNumber column; it always shows when set.
+    // always shows when set.
     public bool ShowEmailOnResume { get; set; }
 
     // Social / contact links surfaced on the public resume.
@@ -21,6 +30,10 @@ public class ApplicationUser : IdentityUser<Guid>
     public string? WebsiteUrl { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    // Brute-force lockout (managed by AuthService, replacing Identity's lockout).
+    public int AccessFailedCount { get; set; }
+    public DateTime? LockoutEnd { get; set; }
 
     // Refresh token (single active session model for the MVP).
     public string? RefreshTokenHash { get; set; }

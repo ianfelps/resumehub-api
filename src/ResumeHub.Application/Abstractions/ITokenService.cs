@@ -7,7 +7,7 @@ namespace ResumeHub.Application.Abstractions;
 /// </summary>
 public interface ITokenService
 {
-    string CreateAccessToken(ApplicationUser user);
+    string CreateAccessToken(User user);
     string CreateRefreshToken();
     string HashRefreshToken(string refreshToken);
 }
