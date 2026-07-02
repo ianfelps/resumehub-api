@@ -5,6 +5,7 @@ using QuestPDF.Infrastructure;
 using ResumeHub.Application.Abstractions;
 using ResumeHub.Application.Common;
 using ResumeHub.Application.Dtos;
+using ResumeHub.Application.Validators;
 using ResumeHub.Domain.Enums;
 using ResumeHub.Domain.Entities;
 using System.Text;
@@ -44,9 +45,7 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
 
     public async Task<ProfileResponse> CreateAsync(ProfileRequest dto)
     {
-        var slug = await EnsureUniqueSlugAsync(
-            SlugGenerator.Slugify(string.IsNullOrWhiteSpace(dto.Slug) ? dto.Name : dto.Slug),
-            excludeProfileId: null);
+        var slug = await ResolveSlugAsync(dto.Slug, dto.Name, excludeProfileId: null);
 
         var profile = new Profile
         {
@@ -71,7 +70,7 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
 
         var desiredSlug = SlugGenerator.Slugify(string.IsNullOrWhiteSpace(dto.Slug) ? dto.Name : dto.Slug);
         if (desiredSlug != profile.Slug)
-            profile.Slug = await EnsureUniqueSlugAsync(desiredSlug, excludeProfileId: profile.Id);
+            profile.Slug = await ResolveSlugAsync(dto.Slug, dto.Name, excludeProfileId: profile.Id);
 
         profile.Name = dto.Name;
         profile.Headline = dto.Headline;
@@ -543,8 +542,14 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
             if ((m = Regex.Match(rest, @"^\[([^\]]+)\]\(([^)]+)\)")).Success)
             {
                 FlushPlain();
-                text.Hyperlink(m.Groups[1].Value, m.Groups[2].Value)
-                    .FontColor(Colors.Blue.Medium).Underline();
+                var label = m.Groups[1].Value;
+                var url = m.Groups[2].Value;
+                // Only emit clickable links for safe schemes; render others as plain text so a
+                // stored javascript:/data: URL can never become an active link in the PDF.
+                if (ValidationExtensions.BeHttpUrl(url))
+                    text.Hyperlink(label, url).FontColor(Colors.Blue.Medium).Underline();
+                else
+                    text.Span(label);
             }
             else if ((m = Regex.Match(rest, @"^\*\*([^*]+)\*\*|^__([^_]+)__")).Success)
             {
@@ -630,6 +635,24 @@ public class ProfileService(IApplicationDbContext db, ICurrentUser currentUser) 
         if (ownedCount != ids.Count)
             throw new NotFoundException(
                 $"Um ou mais itens de {label} não foram encontrados no seu inventário.");
+    }
+
+    /// <summary>
+    /// Resolves the slug to persist. When the user typed an explicit slug it must be unique —
+    /// a collision throws so the UI can tell them to pick another. When the slug is derived from
+    /// the profile name it is silently disambiguated with a numeric suffix.
+    /// </summary>
+    private async Task<string> ResolveSlugAsync(string? explicitSlug, string name, Guid? excludeProfileId)
+    {
+        if (string.IsNullOrWhiteSpace(explicitSlug))
+            return await EnsureUniqueSlugAsync(SlugGenerator.Slugify(name), excludeProfileId);
+
+        var slug = SlugGenerator.Slugify(explicitSlug);
+        if (await db.Profiles.AnyAsync(p =>
+            p.Slug == slug && (excludeProfileId == null || p.Id != excludeProfileId)))
+            throw new ConflictException($"O link público '{slug}' já está em uso. Escolha outro.");
+
+        return slug;
     }
 
     private async Task<string> EnsureUniqueSlugAsync(string baseSlug, Guid? excludeProfileId)

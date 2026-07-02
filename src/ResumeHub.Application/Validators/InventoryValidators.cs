@@ -24,8 +24,8 @@ public class ProjectRequestValidator : AbstractValidator<ProjectRequest>
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
         RuleFor(x => x.Description).MaximumLength(4000);
-        RuleFor(x => x.Url).MaximumLength(500);
-        RuleFor(x => x.RepoUrl).MaximumLength(500);
+        RuleFor(x => x.Url).MaximumLength(500).MustBeHttpUrl();
+        RuleFor(x => x.RepoUrl).MaximumLength(500).MustBeHttpUrl();
     }
 }
 
@@ -68,6 +68,6 @@ public class CourseRequestValidator : AbstractValidator<CourseRequest>
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
         RuleFor(x => x.Provider).MaximumLength(200);
-        RuleFor(x => x.CertificateUrl).MaximumLength(500);
+        RuleFor(x => x.CertificateUrl).MaximumLength(500).MustBeHttpUrl();
     }
 }

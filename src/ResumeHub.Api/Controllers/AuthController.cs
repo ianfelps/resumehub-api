@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using ResumeHub.Application.Auth;
 
 namespace ResumeHub.Api.Controllers;
@@ -7,6 +8,7 @@ namespace ResumeHub.Api.Controllers;
 [ApiController]
 [Route("api/auth")]
 [AllowAnonymous]
+[EnableRateLimiting(DependencyInjection.AuthRateLimitPolicy)]
 public class AuthController(IAuthService authService) : ControllerBase
 {
     [HttpPost("register")]

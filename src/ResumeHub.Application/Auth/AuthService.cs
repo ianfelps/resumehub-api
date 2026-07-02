@@ -43,8 +43,26 @@ public class AuthService(
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
         var user = await userManager.FindByEmailAsync(request.Email);
-        if (user is null || !await userManager.CheckPasswordAsync(user, request.Password))
+
+        // Uniform failure for unknown email or wrong password (no user enumeration).
+        if (user is null)
             throw new UnauthorizedAccessException("Credenciais inválidas.");
+
+        if (userManager.SupportsUserLockout && await userManager.IsLockedOutAsync(user))
+            throw new UnauthorizedAccessException(
+                "Conta temporariamente bloqueada por excesso de tentativas. Tente novamente mais tarde.");
+
+        if (!await userManager.CheckPasswordAsync(user, request.Password))
+        {
+            // Count the failure toward lockout (UserManager doesn't do this automatically,
+            // unlike SignInManager which we intentionally avoid to stay cookie-free).
+            if (userManager.SupportsUserLockout)
+                await userManager.AccessFailedAsync(user);
+            throw new UnauthorizedAccessException("Credenciais inválidas.");
+        }
+
+        if (userManager.SupportsUserLockout && await userManager.GetAccessFailedCountAsync(user) > 0)
+            await userManager.ResetAccessFailedCountAsync(user);
 
         return await IssueTokensAsync(user);
     }

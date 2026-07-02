@@ -1,0 +1,21 @@
+# Build artifacts
+**/bin/
+**/obj/
+
+# Secrets — never bake into an image
+.env
+**/*.user
+
+# VCS & tooling
+.git/
+.gitignore
+.vs/
+.vscode/
+.idea/
+
+# Frontend / unrelated
+**/node_modules/
+
+# Docs & misc
+*.md
+docs/

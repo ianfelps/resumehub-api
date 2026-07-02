@@ -27,6 +27,12 @@ public static class DependencyInjection
             {
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequiredLength = 8;
+
+                // Brute-force defense: lock an account after repeated failed logins.
+                // AuthService must call AccessFailedAsync/ResetAccessFailedCountAsync for this to apply.
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
             })
             .AddErrorDescriber<PtBrIdentityErrorDescriber>()
             .AddEntityFrameworkStores<ResumeHubDbContext>();
